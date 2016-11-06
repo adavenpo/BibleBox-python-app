@@ -24,7 +24,7 @@ categories = [
     'video'
 ]
 
-data_root_dir = "/Users/dspicuzz/src/hack/content"
+data_root_dir = "/var/www/biblebox/biblebox_default"
 
 
 class GetFileList(webapp2.RequestHandler):
@@ -102,8 +102,8 @@ class GetContent(webapp2.RequestHandler):
         self.response.write(json.dumps({'status': 'OK'}))
 
 handlers = [
-    ('/getfilelist/', GetFileList),
-    ('/getcontent/', GetContent)
+    ('/app/getfilelist/', GetFileList),
+    ('/app/getcontent/', GetContent)
 ]
 
 config = {}
