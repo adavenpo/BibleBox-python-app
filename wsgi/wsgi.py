@@ -1,53 +1,110 @@
 #! /usr/bin/env python
 
+import json
 import os
+import os.path
 import sys
-import webapp2
 
+import webapp2
 if os.path.dirname(__file__) not in sys.path:
     sys.path.append(os.path.dirname(__file__))
 
-WEBPAGE="""\
-<!DOCTYPE HTML>
-<html>
-<head>
-  <meta charset="UTF-8">
-  <title>Hi there</title>
-</head>
-<body>
-
-  Looking for something?
-
-  <div style="height: 10px;"> </div>
-  
-  <button class="trop_btn" onclick="document.location='~adavenpo'">
-    Andrew's Page
-  </button>
-
-  <div style="height: 10px;"> </div>
-
-  <button class="trop_btn" onclick="document.location='http://www.kathleenandandrew.org'">
-    The Wedding Page
-  </button>
-
-  <div style="height: 10px;"> </div>
-</body>
-</html>
-"""
-
-class MainPage(webapp2.RequestHandler):
-
-    def get(self):
-        self.response.write(WEBPAGE)
+import owncloud
 
 
-class QueryPage(webapp2.RequestHandler):
+mimes = {
+    'application/vnd.android.package-archive': 'software'
+}
 
-    def get(self):
-        self.response.headers['Content-Type'] = 'text/plain'
-        self.response.write('Hello')
+categories = [
+    'audio',
+    'images',
+    'software',
+    'text',
+    'video'
+]
+
+data_root_dir = "/Users/dspicuzz/src/hack/content"
+
+
+class GetFileList(webapp2.RequestHandler):
+    
+    def post(self):
+        
+        try:
+            client_url = self.request.get('client_url')
+            username = self.request.get('username')
+            password = self.request.get('password')
+            folder_root = self.request.get('folder_root')
+            if folder_root is None:
+                raise ValueError("Must specify folder root")
+            
+            json_data = {}
+            files = {}
+        
+            c = owncloud.Client(client_url)
+            c.login(username, password)
+        
+            for file_info in c.list(folder_root, depth='infinity'):
+                if not file_info.is_dir():
+                    mimetype = file_info.get_content_type()
+                    file_type = mimetype.split('/')[0]
+                    if file_type == 'image':
+                        file_type = 'images'
+                        
+                    if file_type not in ['audio', 'video', 'image']:
+                        file_type = mimes.get(mimetype)
+                        if file_type is None:
+                            file_type = 'text'
+        
+                    f = files.setdefault(file_type, [])
+                    f.append((file_info.name, file_info.path, mimetype))
+                    
+            json_data['root'] = [files]
+            json_data['status'] = 'OK'
+        
+            #with open('filenames.json', 'w') as json_file:
+            content = json.dumps(json_data, sort_keys=True,
+                              indent=4, separators=(',', ': '))
+        except Exception as e:
+            content = json.dumps({'status': 'ERROR', 'error': str(e)})
+        
+        self.response.headers['Content-Type'] = 'application/json'
+        self.response.write(content)
+
+
+class GetContent(webapp2.RequestHandler):
+    
+    def post(self):
+        
+        client_url = self.request.get('client_url')
+        username = self.request.get('username')
+        password = self.request.get('password')
+        paths = self.request.get('paths')
+        
+        # list of [remote_path, category, filename]
+        paths = json.loads(paths)['root']
+
+        # Connecting to the NextCloud Server
+        c = owncloud.Client(client_url)
+        c.login(username, password)
+        
+        # Save each item in the list of files into the local directory in the same structure
+        for remote_path, category, filename in paths:
+            if category in categories:
+                local_path = os.path.join(data_root_dir, category, os.path.basename(filename))
+                local_dir = os.path.dirname(local_path)
+                if not os.path.exists(local_dir):
+                    os.makedirs(local_dir)
+                c.get_file(remote_path, local_path)
+        
+        self.response.headers['Content-Type'] = 'application/json'
+        self.response.write(json.dumps({'status': 'OK'}))
+
+
 
 application = webapp2.WSGIApplication([
-    ('/app/', MainPage),
-    ('/wsgi/', MainPage),
-    ('/wsgi/query', QueryPage), ], debug=True)
+    ('/getfilelist/', GetFileList),
+    ('/getcontent/', GetContent)
+], debug=True)
+    

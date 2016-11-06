@@ -1,0 +1,4 @@
+webapp2
+webob
+requests
+six
