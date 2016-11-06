@@ -8,7 +8,7 @@
 <link rel="stylesheet" href="css/bootstrap-theme.min.css" />
 <script src='js/jquery.min.js'></script>
 <script src='js/bootstrap.min.js'></script>
-<script src='js/externalDownload.js'></script>
+<script src='externalDownload.js'></script>
 <style>
 	.form-control {width: 200px;}
 	.form {margin:15px;}
@@ -17,21 +17,27 @@
 <body>
 <form id="loginForm">
   <span id="errorMessage" style="color:red; margin-bottom:5px; display:none">Incorrect user name/password. Please try again</span>
+  <h3>BibleBox NextCloud Downloader</h3>
   <div class="form-group">
-    <label for="directoryPath">Please enter your directory path</label>
-    <input type="text" class="form-control" id="directoryPath" placeholder="Directory Path">
+    <label for="client_url">nextCloud/owncloud server URL</label>
+    <input type="text" class="form-control" id="client_url" placeholder="https://example.com/nextcloud/">
   </div>
   <div class="form-group">
-    <label for="userName">Please enter your user name</label>
-    <input type="text" class="form-control" id="userName" placeholder="User Name">
+    <label for="folder_root">Please enter your directory path</label>
+    <input type="text" class="form-control" id="folder_root" placeholder="Directory Path">
   </div>
   <div class="form-group">
-    <label for="userPassword">Password</label>
-    <input type="password" class="form-control" id="userPassword" placeholder="Password">
+    <label for="username">Please enter your user name</label>
+    <input type="text" class="form-control" id="username" placeholder="User Name">
+  </div>
+  <div class="form-group">
+    <label for="password">Password</label>
+    <input type="password" class="form-control" id="password" placeholder="Password">
   </div>
   <button type="submit" class="btn btn-default" id="loginSubmit">Submit</button>
 </form>
 <form id="selectorForm">
 </form>
+<div id="done"></div>
 </body>
 </html>

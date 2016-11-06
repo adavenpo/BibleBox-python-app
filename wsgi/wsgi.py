@@ -60,7 +60,7 @@ class GetFileList(webapp2.RequestHandler):
                     f = files.setdefault(file_type, [])
                     f.append((file_info.name, file_info.path, mimetype))
                     
-            json_data['root'] = [files]
+            json_data['root'] = [(k, v) for k, v in files.iteritems()]
             json_data['status'] = 'OK'
         
             #with open('filenames.json', 'w') as json_file:
@@ -101,10 +101,37 @@ class GetContent(webapp2.RequestHandler):
         self.response.headers['Content-Type'] = 'application/json'
         self.response.write(json.dumps({'status': 'OK'}))
 
-
-
-application = webapp2.WSGIApplication([
+handlers = [
     ('/getfilelist/', GetFileList),
     ('/getcontent/', GetContent)
-], debug=True)
+]
+
+config = {}
+debug = False
+
+# Debug use only
+static = os.environ.get('DEBUG')
+if static:
+    
+    import mimetypes
+    
+    static_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'static'))
+    
+    class StaticFileHandler(webapp2.RequestHandler):
+        def get(self, path):
+            abs_path = os.path.abspath(os.path.join(static_root, path))
+            if os.path.isdir(abs_path) or abs_path.find(static_root) != 0:
+                self.response.set_status(403)
+                return
+            try:
+                with open(abs_path, 'r') as fp:
+                    self.response.headers.add_header('Content-Type', mimetypes.guess_type(abs_path)[0])
+                    self.response.out.write(fp.read())
+            except:
+                self.response.set_status(404)
+    
+    debug = True
+    handlers.append((r'/static/(.+)', StaticFileHandler))
+
+application = webapp2.WSGIApplication(handlers, debug=debug, config=config)
     
