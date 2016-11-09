@@ -1,43 +1,77 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta content="text/html;charset=utf-8" http-equiv="Content-Type">
-<meta content="utf-8" http-equiv="encoding">
-<title>The BibleBox</title>
-<link rel="stylesheet" href="css/bootstrap.min.css" />
-<link rel="stylesheet" href="css/bootstrap-theme.min.css" />
-<script src='js/jquery.min.js'></script>
-<script src='js/bootstrap.min.js'></script>
-<script src='externalDownload.js'></script>
-<style>
+    <meta content="text/html;charset=utf-8" http-equiv="Content-Type">
+    <meta content="utf-8" http-equiv="encoding">
+    <title>The BibleBox</title>
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/bootstrap-theme.css">
+    <link rel="stylesheet" href="/css/font.css">
+    <link rel="stylesheet" href="/css/structure.css">
+    <script src='js/jquery.min.js'></script>
+    <script src='js/bootstrap.min.js'></script>
+    <script src='externalDownload.js'></script>
+    <style>
 	.form-control {width: 200px;}
 	.form {margin:15px;}
-</style>
+    </style>
 </head>
 <body>
-<form id="loginForm">
-  <span id="errorMessage" style="color:red; margin-bottom:5px; display:none">Incorrect user name/password. Please try again</span>
-  <h3>BibleBox NextCloud Downloader</h3>
-  <div class="form-group">
-    <label for="client_url">nextCloud/owncloud server URL</label>
-    <input type="text" class="form-control" id="client_url" placeholder="https://example.com/nextcloud/">
+  <span id="vc_count"></span>
+  <div id="top-nav" class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container">
+      <div class="navbar-header">
+        <a href="/" class="brand navbar-brand">BibleBox</a>
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+      </div>
+      <div class="collapse navbar-collapse">
+        <ul class="nav navbar-nav">
+          <li><a href="/Bible-EnglishWEB/index.htm" class="active">Bible</a></li>
+          <li><a href="/shared/books/">Books</a></li>
+          <li><a href="/shared/audio/">Audio</a></li>
+          <li><a href="/shared/videos/">Video</a></li>
+          <li><a href="/shared/photos/">Images</a></li>
+          <li><a href="/shared/software/">Apps</a></li>
+          <li><a href="/shared/">All Files</a></li>
+          <li><a href="/chat.html">Chat</a></li>
+          <li><a href="/stats.html">Statistics</a></li>
+          <li><a href="/about.html">About</a></li>
+        </ul>
+      </div><!--/.nav-collapse -->
+    </div>
   </div>
-  <div class="form-group">
-    <label for="folder_root">Please enter your directory path</label>
-    <input type="text" class="form-control" id="folder_root" placeholder="Directory Path">
+
+  <div class="container">
+    <br/>
+    <form id="loginForm">
+      <span id="errorMessage" style="color:red; margin-bottom:5px; display:none">Incorrect user name/password. Please try again</span>
+      <h3>BibleBox NextCloud Downloader</h3>
+      <div class="form-group">
+        <label for="client_url">nextCloud/owncloud server URL</label>
+        <input type="text" class="form-control" id="client_url" placeholder="https://example.com/nextcloud/">
+      </div>
+      <div class="form-group">
+        <label for="folder_root">Please enter your directory path</label>
+        <input type="text" class="form-control" id="folder_root" placeholder="Directory Path">
+      </div>
+      <div class="form-group">
+        <label for="username">Please enter your user name</label>
+        <input type="text" class="form-control" id="username" placeholder="User Name">
+      </div>
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" class="form-control" id="password" placeholder="Password">
+      </div>
+      <button type="submit" class="btn btn-default" id="loginSubmit">Submit</button>
+    </form>
+    <form id="selectorForm">
+    </form>
+    <div id="done"></div>
   </div>
-  <div class="form-group">
-    <label for="username">Please enter your user name</label>
-    <input type="text" class="form-control" id="username" placeholder="User Name">
-  </div>
-  <div class="form-group">
-    <label for="password">Password</label>
-    <input type="password" class="form-control" id="password" placeholder="Password">
-  </div>
-  <button type="submit" class="btn btn-default" id="loginSubmit">Submit</button>
-</form>
-<form id="selectorForm">
-</form>
-<div id="done"></div>
 </body>
 </html>
